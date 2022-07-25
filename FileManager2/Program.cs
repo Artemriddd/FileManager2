@@ -9,6 +9,7 @@ namespace FileManager2
         {
             Console.WindowWidth = Console.LargestWindowWidth;
             Console.WindowHeight = Console.LargestWindowHeight;
+            CommandHelp.Help();
             InputCommand userConsoleInterface = new();
             userConsoleInterface.InCommand();
         }

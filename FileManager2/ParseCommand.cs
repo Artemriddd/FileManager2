@@ -11,7 +11,9 @@ namespace FileManager2
     {
         public void ParseCommandString(string command) // Приняли на вход срочку из ввода командр
         {
-            CommandTreeView commandTree = new(); // Инициализируем обьект класса для отрисовки каталога
+            CommandTreeView commandTree = new(); // Инициализируем обьект класса для отрисовки каталога (Не знаю лучше тут объявить все обьекты классов, или нет,
+                                                 // но идея в том, что вдруг какой то объект не будет использован и будет только занимать память,
+                                                 // соответственно создаю объекты когда идет соответсвующая команда
             string[] commandParams = command.ToLower().Split(' '); // Разделели по пробелам
             if (commandParams.Length > 0)
             {
@@ -48,17 +50,35 @@ namespace FileManager2
                         break;
 
                     case "cp":
+
                         if (commandParams.Length > 2 && File.Exists(commandParams[1]))
                         {
                             CommandCopy commandCopy = new();
-                            commandCopy.FileCopy(commandParams[1], commandParams[2]);
-                            commandTree.Update(); // Обновляем экран после копирования, чтобы сразу видеть в каталоге, что копирование прошло успешно
+                            try
+                            {
+                                commandCopy.FileCopy(commandParams[1], commandParams[2]);
+                                commandTree.Update(); // Обновляем экран после копирования, чтобы сразу видеть в каталоге, что копирование прошло успешно
+                            }
+                            catch
+                            {
+                                commandTree.Update();
+                                Console.WriteLine("\nОшибка");
+                            }
+
                         }
                         else if (commandParams.Length > 2 && Directory.Exists(commandParams[1]))
                         {
                             CommandCopy commandCopy = new();
-                            commandCopy.CopyDirectory(commandParams[1], commandParams[2], true);
-                            commandTree.Update();
+                            try
+                            {
+                                commandCopy.CopyDirectory(commandParams[1], commandParams[2], true);
+                                commandTree.Update();
+                            }
+                            catch
+                            {
+                                commandTree.Update();
+                                Console.WriteLine("\nОшибка");
+                            }
                         }
                         else
                         {
@@ -70,20 +90,38 @@ namespace FileManager2
                         if (commandParams.Length > 1 && !File.Exists(commandParams[1]))
                         {
                             CommandCreate commandCreate = new();
-                            commandCreate.FileCreate(commandParams[1]);
-                            commandTree.Update(); // Обновляем экран после создания файла
+                            try
+                            {
+                                commandCreate.FileCreate(commandParams[1]);
+                                commandTree.Update(); // Обновляем экран после создания файла
+                            }
+                            catch
+                            {
+                                commandTree.Update();
+                                Console.WriteLine("\nОшибка");
+                            }
+
                         }
                         else
                         {
                             commandTree.Update();
                         }
                         break;
+
                     case "crdir":
-                        if (commandParams.Length > 1)
+                        if (commandParams.Length > 1 && !Directory.Exists(commandParams[1]))
                         {
                             CommandCreate commandCreate = new();
-                            commandCreate.CreateDirectory(commandParams[1]);
-                            commandTree.Update();
+                            try
+                            {
+                                commandCreate.CreateDirectory(commandParams[1]);
+                                commandTree.Update();
+                            }
+                            catch
+                            {
+                                commandTree.Update();
+                                Console.WriteLine("\nОшибка");
+                            }
                         }
                         else
                         {
@@ -95,20 +133,37 @@ namespace FileManager2
                         if (commandParams.Length > 2 && File.Exists(commandParams[1]) && !File.Exists(commandParams[2]))
                         {
                             CommandMove commandMove = new();
-                            commandMove.MoveFile(commandParams[1], commandParams[2]);
-                            commandTree.Update();
+                            try
+                            {
+                                commandMove.MoveFile(commandParams[1], commandParams[2]);
+                                commandTree.Update();
+                            }
+                            catch
+                            {
+                                commandTree.Update();
+                                Console.WriteLine("\nОшибка");
+                            }
                         }
                         else
                         {
                             commandTree.Update();
                         }
                         break;
+
                     case "movedir":
                         if (commandParams.Length > 2 && Directory.Exists(commandParams[1]) && !Directory.Exists(commandParams[2]))
                         {
                             CommandMove commandMove = new();
-                            commandMove.MoveDir(commandParams[1], commandParams[2]);
-                            commandTree.Update();
+                            try
+                            {
+                                commandMove.MoveDir(commandParams[1], commandParams[2]);
+                                commandTree.Update();
+                            }
+                            catch
+                            {
+                                commandTree.Update();
+                                Console.WriteLine("\nОшибка");
+                            }
                         }
                         else
                         {
@@ -120,20 +175,37 @@ namespace FileManager2
                         if (commandParams.Length > 2 && File.Exists(commandParams[1]) && !File.Exists(commandParams[2]))
                         {
                             CommandMove commandMove = new();
-                            commandMove.MoveFile(commandParams[1], commandParams[2]);
-                            commandTree.Update();
+                            try
+                            {
+                                commandMove.MoveFile(commandParams[1], commandParams[2]);
+                                commandTree.Update();
+                            }
+                            catch
+                            {
+                                commandTree.Update();
+                                Console.WriteLine("\nОшибка");
+                            }
                         }
                         else
                         {
                             commandTree.Update();
                         }
                         break;
+
                     case "rndir":
                         if (commandParams.Length > 2 && Directory.Exists(commandParams[1]) && !Directory.Exists(commandParams[2]))
                         {
                             CommandMove commandMove = new();
-                            commandMove.MoveDir(commandParams[1], commandParams[2]);
-                            commandTree.Update();
+                            try
+                            {
+                                commandMove.MoveDir(commandParams[1], commandParams[2]);
+                                commandTree.Update();
+                            }
+                            catch
+                            {
+                                commandTree.Update();
+                                Console.WriteLine("\nОшибка");
+                            }
                         }
                         else
                         {
@@ -255,7 +327,7 @@ namespace FileManager2
                         break;
 
                     case "textinfo":
-                        if (commandParams.Length > 1 && File.Exists(commandParams[1]))
+                        if (commandParams.Length > 1 && File.Exists(commandParams[1]) && (Path.GetExtension(commandParams[1]) == "txt"))
                         {
                             CommandTextData commandTextData = new();
                             commandTree.Update();
@@ -271,25 +343,7 @@ namespace FileManager2
                         break;
 
                     case "help":
-                        Console.Clear();
-                        Console.SetCursorPosition(0, 3);
-                        Console.WriteLine("Для выхода наберите quit");
-                        Console.WriteLine("Для вызова справки наберите help");
-                        Console.WriteLine("Для вызова каталога наберите cd path");
-                        Console.WriteLine("Для вызова каталога логических дисков наберите cd ..");
-                        Console.WriteLine("Для копирования файла/каталога наберите cp pathSourse pathTarget");
-                        Console.WriteLine("Для создания файла наберите crfile path");
-                        Console.WriteLine("Для создания каталога наберите crdir path");
-                        Console.WriteLine("Для перемещения файла наберите movefile pathSourse pathTarget");
-                        Console.WriteLine("Для перемещения каталога наберите movedir pathSourse pathTarget");
-                        Console.WriteLine("Для переименования файла наберите rnfile pathSourse pathTarget");
-                        Console.WriteLine("Для переименования каталога наберите rndir pathSourse pathTarget");
-                        Console.WriteLine("Для удаление файла/каталога наберите rm path");
-                        Console.WriteLine("Для вызова размера файла/каталога наберите filesize path/dirsize path");
-                        Console.WriteLine("Для изменения аттрибута \"только чтение\" наберите isreadonly path / isnonreadonly path");
-                        Console.WriteLine("Для изменения аттрибута \"скрытый\" наберите ishidden path / isnonhidden path");
-                        Console.WriteLine("Для поиска по маске наберите search path \"*.test\"");
-                        Console.WriteLine("Для вызова информации о текстовом файле наберите textinfo path");
+                        CommandHelp.Help();
                         break;
 
                     default:
@@ -297,7 +351,6 @@ namespace FileManager2
                         Console.SetCursorPosition(0, 3);
                         Console.WriteLine("Неизвестная команда. Для вызова справки наберите help");
                         break;
-
                 }
             }
         }
